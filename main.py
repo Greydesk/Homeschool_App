@@ -91,15 +91,13 @@ def read_root():
     if m_id not in modules:
       modules[m_id] = {
         "name": m,
-        "lessons": []
+        "lessons": {}
       }
 
-    if le_id is not None:
+    if le_id is None:
       continue
 
     modules[m_id]["lessons"][le_id] = le
-
-    lessons = modules[m_id]["lessons"]
 
   html = """
 <script>
@@ -134,6 +132,14 @@ function toggle(id, iconId) {
 }
 .level-node {
   margin-left: 60px;
+  font-family: monospace;
+}
+.module-node {
+  margin-left: 80px;
+  font-family: monospace;
+}
+.lesson-node {
+  margin-left: 100px;
   font-family: monospace;
 }
 .toggle {
@@ -208,7 +214,7 @@ function toggle(id, iconId) {
             icon = f"icon_mod_{m_id}"
 
             html += f"""
-<div class="level-node" onclick="toggle('{mod_div}', '{icon}')" >
+<div class="module-node" onclick="toggle('{mod_div}', '{icon}')" >
     <span class="toggle" id="{icon}">►</span>
     {m_data['name']}
 </div>
@@ -217,7 +223,7 @@ function toggle(id, iconId) {
 """
             
             for le_id, le_name in m_data["lessons"].items():
-              html += f"<div class='level-node'>{le_name}</div>"
+              html += f"<div class='lesson-node'>{le_name}</div>"
 
             html += "</div>" # module
           html += "</div>" # level
