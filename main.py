@@ -197,12 +197,12 @@ def read_root():
     cur_icon = f"icon_cur_{c_id}"
 
     html += f"""
-<div class="curriculum-node" onclick="toggle('{cur_div}', '{cur_icon}')" >
-  <span class="toggle" id="{cur_icon}">►</span>
-  {c_data['name']}
-</div>
+      <div class="curriculum-node" onclick="toggle('{cur_div}', '{cur_icon}')" >
+        <span class="toggle" id="{cur_icon}">►</span>
+        {c_data['name']}
+      </div>
 
-<div id="{cur_div}" style="display:none;">
+      <div id="{cur_div}" style="display:none;">
 """
     
     #Subject level
@@ -211,18 +211,18 @@ def read_root():
       sub_icon = f"icon_sub_{s_id}"
 
       html += f"""
-<div class="subject-node" onclick="toggle('{sub_div}', '{sub_icon}')" >
-    <span class="toggle" id="{sub_icon}">►</span>
-    {s_data['name']}
-    <span
-      class="add-btn"
-      onclick="event.stopPropagation(); openDomainModal('{s_id}')"
-      title="Add Domain">
-      +
-    </span>
-</div>
+        <div class="subject-node" onclick="toggle('{sub_div}', '{sub_icon}')" >
+          <span class="toggle" id="{sub_icon}">►</span>
+          {s_data['name']}
+          <span
+            class="add-btn"
+            onclick="event.stopPropagation(); openDomainModal('{s_id}')"
+            title="Add Domain">
+            +
+          </span>
+        </div>
 
-<div id="{sub_div}" style="display:none;">
+        <div id="{sub_div}" style="display:none;">
 """
       
       #Domain level
@@ -231,12 +231,12 @@ def read_root():
         dom_icon = f"icon_dom_{d_id}"
 
         html += f"""
-<div class="domain-node" onclick="toggle('{dom_div}', '{dom_icon}')" >
-    <span class="toggle" id="{dom_icon}">►</span>
-    {d_data['name']}
-</div>
+          <div class="domain-node" onclick="toggle('{dom_div}', '{dom_icon}')" >
+            <span class="toggle" id="{dom_icon}">►</span>
+            {d_data['name']}
+          </div>
 
-<div id="{dom_div}" style="display:none;">
+          <div id="{dom_div}" style="display:none;">
 """
         
         #Level level
@@ -245,12 +245,12 @@ def read_root():
           lev_icon = f"icon_lev_{l_id}"
 
           html += f"""
-<div class="level-node" onclick="toggle('{lev_div}', '{lev_icon}')" >
-    <span class="toggle" id="{lev_icon}">►</span>
-    Level {l_data['number']}
-</div>
+            <div class="level-node" onclick="toggle('{lev_div}', '{lev_icon}')" >
+              <span class="toggle" id="{lev_icon}">►</span>
+              Level {l_data['number']}
+            </div>
 
-<div id="{lev_div}" style="display:none;">
+            <div id="{lev_div}" style="display:none;">
 """
           #Module level
           for m_id, m_data in l_data["modules"].items():
@@ -258,23 +258,23 @@ def read_root():
             mod_icon = f"icon_mod_{m_id}"
 
             html += f"""
-<div class="module-node" onclick="toggle('{mod_div}', '{mod_icon}')" >
-    <span class="toggle" id="{mod_icon}">►</span>
-    {m_data['name']}
-</div>
+              <div class="module-node" onclick="toggle('{mod_div}', '{mod_icon}')" >
+                <span class="toggle" id="{mod_icon}">►</span>
+                {m_data['name']}
+              </div>
 
-<div id="{mod_div}" style="display:none;">
+              <div id="{mod_div}" style="display:none;">
 """
             
             #Lesson level
             for le_id, le_name in m_data["lessons"].items():
-              html += f"<div class='lesson-node'>{le_name}</div>"
+              html += f"            <div class='lesson-node'>{le_name}</div>"
 
-            html += "</div>" # module
-          html += "</div>" # level
-        html += "</div>" # domain
-      html += "</div>" # subject
-    html += "</div>" # curriculum
+            html += "            </div>" # module
+          html += "          </div>" # level
+        html += "        </div>" # domain
+      html += "      </div>" # subject
+    html += "    </div>" # curriculum
   html += """
   </body>
 </html>
