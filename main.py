@@ -159,69 +159,76 @@ function toggle(id, iconId) {
 <hr/>
 """
   
+  #Curriculum level
   for c_id, c_data in tree.items():
     cur_div = f"cur_{c_id}"
-    icon = f"icon_cur_{c_id}"
+    cur_icon = f"icon_cur_{c_id}"
 
     html += f"""
-<div class="curriculum-node" onclick="toggle('{cur_div}', '{icon}')" >
-  <span class="toggle" id="{icon}">►</span>
+<div class="curriculum-node" onclick="toggle('{cur_div}', '{cur_icon}')" >
+  <span class="toggle" id="{cur_icon}">►</span>
   {c_data['name']}
 </div>
+
 <div id="{cur_div}" style="display:none;">
 """
+    
+    #Subject level
     for s_id, s_data in c_data["subjects"].items():
       sub_div = f"sub_{s_id}"
-      icon = f"icon_sub_{s_id}"
+      sub_icon = f"icon_sub_{s_id}"
 
       html += f"""
-<div class="subject-node" onclick="toggle('{sub_div}', '{icon}')" >
-    <span class="toggle" id="{icon}">►</span>
+<div class="subject-node" onclick="toggle('{sub_div}', '{sub_icon}')" >
+    <span class="toggle" id="{sub_icon}">►</span>
     {s_data['name']}
 </div>
 
 <div id="{sub_div}" style="display:none;">
 """
       
+      #Domain level
       for d_id, d_data in s_data["domains"].items():
         dom_div = f"dom_{d_id}"
-        icon = f"icon_dom_{d_id}"
+        dom_icon = f"icon_dom_{d_id}"
 
         html += f"""
-<div class="domain-node" onclick="toggle('{dom_div}', '{icon}')" >
-    <span class="toggle" id="{icon}">►</span>
+<div class="domain-node" onclick="toggle('{dom_div}', '{dom_icon}')" >
+    <span class="toggle" id="{dom_icon}">►</span>
     {d_data['name']}
 </div>
 
 <div id="{dom_div}" style="display:none;">
 """
         
+        #Level level
         for l_id, l_data in d_data["levels"].items():
           lev_div = f"lev_{l_id}"
-          icon = f"icon_lev_{l_id}"
+          lev_icon = f"icon_lev_{l_id}"
 
           html += f"""
-<div class="level-node" onclick="toggle('{lev_div}', '{icon}')" >
-    <span class="toggle" id="{icon}">►</span>
+<div class="level-node" onclick="toggle('{lev_div}', '{lev_icon}')" >
+    <span class="toggle" id="{lev_icon}">►</span>
     Level {l_data['number']}
 </div>
 
 <div id="{lev_div}" style="display:none;">
 """
-          
+          #Module level
           for m_id, m_data in l_data["modules"].items():
             mod_div = f"mod_{m_id}"
-            icon = f"icon_mod_{m_id}"
+            mod_icon = f"icon_mod_{m_id}"
 
             html += f"""
-<div class="module-node" onclick="toggle('{mod_div}', '{icon}')" >
-    <span class="toggle" id="{icon}">►</span>
+<div class="module-node" onclick="toggle('{mod_div}', '{mod_icon}')" >
+    <span class="toggle" id="{mod_icon}">►</span>
     {m_data['name']}
 </div>
 
 <div id="{mod_div}" style="display:none;">
 """
             
+            #Lesson level
             for le_id, le_name in m_data["lessons"].items():
               html += f"<div class='lesson-node'>{le_name}</div>"
 
