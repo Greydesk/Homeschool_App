@@ -113,6 +113,13 @@ function toggle(id, iconId) {
     icon.innerHTML = "►"; // collapsed
   }
 }
+function openDomainModal(subjectId) {
+  document.getElementById('modal_subject_id').value = subjectId;
+  document.getElementById('domainModal').style.display = 'block';
+}
+function closeModal() {
+  document.getElementById('domainModal').style.display = 'none';
+}
 </script>
 <style>
 .curriculum-node {
@@ -150,12 +157,23 @@ function toggle(id, iconId) {
 
 <h1>Curriculum</h1>
 
-<h3>Add Subject</h3>
-<form method="post" action="/add_subject">
-  <input name="name" placeholder="New Subject">
-  <input name="curriculum_id" value="1">
-  <button type="submit">Add Subject</button>
-</form>
+<hr/>
+
+<div id="domainModal" style="display:none; position:fixed; top:30%; left:40%; background:white; padding:15px; border:1px solid #ccc; box-shadow: 0 0px 10px rgba(0,0,0,0.3);">
+  <form method="post" action="/add_domain">
+    <input type="hidden" name="subject_id" id="modal_subject_id">
+    <div>
+      <label for="domain_name">Domain Name:</label>
+      <input type="text" name="name" id="domain_name" placeholder="New Domain">
+    </div>
+    <br/>
+    <button type="submit">Submit</button>
+    <button type="button" onclick="closeModal">Cancel</button>
+  </form>
+</div>
+
+<h1>Curriculum</h1>
+
 <hr/>
 """
   
@@ -182,6 +200,7 @@ function toggle(id, iconId) {
 <div class="subject-node" onclick="toggle('{sub_div}', '{sub_icon}')" >
     <span class="toggle" id="{sub_icon}">►</span>
     {s_data['name']}
+    <button type="button" onclick="openDomainModal('{s_id}')">+</button>
 </div>
 
 <div id="{sub_div}" style="display:none;">
@@ -247,6 +266,21 @@ def add_subject(name: str = Form(...), curriculum_id: int = Form(...)):
   cur.execute(
     "INSERT INTO subjects (name, curriculum_id) VALUES (%s, %s)",
     (name, curriculum_id)
+  )
+
+  conn.commit()
+  conn.close()
+
+  return RedirectResponse("/", status_code=303)
+
+@app.post("/add_domain")
+def add_domain(name: str = Form(...), subject_id: int = Form(...)):
+  conn = get_connection()
+  cur = conn.cursor()
+
+  cur.execute(
+    "INSERT INTO domains (name, subject_id) VALUES (%s, %s)",
+    (name, subject_id)
   )
 
   conn.commit()
