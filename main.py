@@ -63,6 +63,8 @@ def read_root():
 
     if d_id is None:
       continue
+
+    domains = subjects[s_id]["domains"]
     
     if d_id not in domains:
       domains[d_id] = {
@@ -72,6 +74,8 @@ def read_root():
 
     if l_id is None:
       continue
+
+    levels = domains[d_id]["levels"]
 
     if l_id not in levels:
       levels[l_id] = {
@@ -94,6 +98,8 @@ def read_root():
       continue
 
     modules[m_id]["lessons"][le_id] = le
+
+    lessons = modules[m_id]["lessons"]
 
   html = """
 <script>
