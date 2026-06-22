@@ -39,6 +39,62 @@ def read_root():
 
   conn.close()
 
+  tree = {}
+
+  for r in rows:
+    c_id, c, s_id, s, d_id, d, l_id, l, m_id, m, le_id, le = r
+
+    if c_id not in tree:
+      tree[c_id] = {
+        "name": c,
+        "subjects": {}
+      }
+
+    if s_id is None:
+      continue
+
+    subjects = tree[c_id]["subjects"]
+
+    if s_id not in subjects:
+      subjects[s_id] = {
+        "name": s,
+        "domains": {}
+      }
+
+    if d_id is None:
+      continue
+    
+    if d_id not in domains:
+      domains[d_id] = {
+        "name": d,
+        "levels": {}
+      }
+
+    if l_id is None:
+      continue
+
+    if l_id not in levels:
+      levels[l_id] = {
+        "number": l,
+        "modules": {}
+      }
+    
+    if m_id is None:
+      continue
+
+    modules = levels[l_id]["modules"]
+
+    if m_id not in modules:
+      modules[m_id] = {
+        "name": m,
+        "lessons": []
+      }
+
+    if le_id is not None:
+      continue
+
+    modules[m_id]["lessons"][le_id] = le
+
   html = """
 <script>
 function toggle(id, iconId) {
@@ -91,134 +147,77 @@ function toggle(id, iconId) {
 <hr/>
 """
   
-  last = {"c": None, "s": None, "d": None, "l": None, "m": None}
+  for c_id, c_data in tree.items():
+    cur_div = f"cur_{c_id}"
+    icon = f"icon_cur_{c_id}"
 
-  for r in rows:
-    c_id, c, s_id, s, d_id, d, l_id, l, m_id, m, le_id, le = r
-
-    #Curriculum Level
-    if c != last["c"]:
-      # CLOSE lower levels FIRST
-      if last["s"] is not None:
-        html += "</div>" # close previous subject
-        last["s"] = None
-
-      if last["c"] is not None:
-        html += "</div>" # close previous curriculum
-
-      curriculum_div_id = f"cur_{c_id}"
-      icon_id = f"icon_cur_{c_id}"
+    html += f"""
+<div class="curriculum-node" onclick="toggle('{cur_div}', '{icon}')" >
+  <span class="toggle" id="{icon}">►</span>
+  {c_data['name']}
+</div>
+<div id="{cur_div}" style="display:none;">
+"""
+    for s_id, s_data in c_data["subjects"].items():
+      sub_div = f"sub_{s_id}"
+      icon = f"icon_sub_{s_id}"
 
       html += f"""
-<div class="curriculum-node"
-    onclick="toggle('{curriculum_div_id}', '{icon_id}')">
-
-    <span class="toggle" id="{icon_id}">►</span>
-    {c}
+<div class="subject-node" onclick="toggle('{sub_div}', '{icon}')" >
+    <span class="toggle" id="{icon}">►</span>
+    {s_data['name']}
 </div>
 
-<div id="{curriculum_div_id}" style="display:none;">
+<div id="{sub_div}" style="display:none;">
 """
-      last["c"] = c
-      last["s"] = None
-
-    #Subject level
-    if s != last["s"]:
-      # CLOSE lower levels FIRST
-      if last["d"] is not None:
-        html += "</div>" # close previous domain
-        last["d"] = None
-
-      if last["s"] is not None:
-        html += "</div>" # close previous subject
-
-      subject_div_id = f"sub_{s_id}"
-      icon_id = f"icon_sub_{s_id}"
-
-      html += f"""
-<div class="subject-node"
-    onclick="toggle('{subject_div_id}', '{icon_id}')">
-
-    <span class="toggle" id="{icon_id}">►</span>
-    {s}
-</div>
-
-<div id="{subject_div_id}" style="display:none;">
-"""
-      last["s"] = s
-      last["d"] = None
-
-    #Domain level
-    if d != last["d"]:
-      #CLOSE lower levels FIRST
-      if last["l"] is not None:
-        html += "</div>" # close previous level
-        last["l"] = None
-
-      if last["d"] is not None:
-        html += "</div>" # close previous domain
-
-      domain_div_id = f"dom_{d_id}"
-      icon_id = f"icon_dom_{d_id}"
-
-      html += f"""
-<div class="domain-node"
-    onclick="toggle('{domain_div_id}', '{icon_id}')">
-
-    <span class="toggle" id="{icon_id}">►</span>
-      {d}
-</div>
-
-<div id="{domain_div_id}" style="display:none;">
-"""
-      last["d"] = d
-      last["l"] = None
-
-    #Level level
-    if l != last["l"]:
-      #CLOSE lower levels FIRST
-      if last["m"] is not None:
-        html += "</div>" # close previous module
-        last["m"] = None
       
-      if last["l"] is not None:
-        html += "</div>" # close prebious level
+      for d_id, d_data in s_data["domains"].items():
+        dom_div = f"dom_{d_id}"
+        icon = f"icon_dom_{d_id}"
 
-      level_div_id = f"lev_{l_id}"
-      icon_id = f"icon_lev_{l_id}"
-
-      html += f"""
-<div class="level-node"
-      onclick="toggle('{level_div_id}', '{icon_id}')">
-
-      <span class="toggle" id="{icon_id}">►</span>
-        Level {l}
+        html += f"""
+<div class="domain-node" onclick="toggle('{dom_div}', '{icon}')" >
+    <span class="toggle" id="{icon}">►</span>
+    {d_data['name']}
 </div>
 
-<div id="{level_div_id}" style="display:none;">
+<div id="{dom_div}" style="display:none;">
 """
-      last["l"] = l
-      last["m"] = None
+        
+        for l_id, l_data in d_data["levels"].items():
+          lev_div = f"lev_{l_id}"
+          icon = f"icon_lev_{l_id}"
 
-    if m != last["m"]:
-      html += f"<div style='margin-left:80px'>{m}</div>"
-      last["m"] = m
+          html += f"""
+<div class="level-node" onclick="toggle('{lev_div}', '{icon}')" >
+    <span class="toggle" id="{icon}">►</span>
+    Level {l_data['number']}
+</div>
 
-    if le:
-      html += f"<div style='margin-left:100px'>- {le}</div>"
+<div id="{lev_div}" style="display:none;">
+"""
+          
+          for m_id, m_data in l_data["modules"].items():
+            mod_div = f"mod_{m_id}"
+            icon = f"icon_mod_{m_id}"
 
-  if last["l"] is not None:
-    html += "</div>"
+            html += f"""
+<div class="level-node" onclick="toggle('{mod_div}', '{icon}')" >
+    <span class="toggle" id="{icon}">►</span>
+    {m_data['name']}
+</div>
 
-  if last["d"] is not None:
-    html += "</div>"
+<div id="{mod_div}" style="display:none;">
+"""
+            
+            for le_id, le_name in m_data["lessons"].items():
+              html += f"<div class='level-node'>{le_name}</div>"
 
-  if last["s"] is not None:
-    html += "</div>"
-
-  if last["c"] is not None:
-    html += "</div>"
-
+            html += "</div>" # module
+          html += "</div>" # level
+        html += "</div>" # domain
+      html += "</div>" # subject
+    html += "</div>" # curriculum
   return html
 
 @app.post("/add_subject")
