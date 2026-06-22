@@ -100,81 +100,95 @@ def read_root():
     modules[m_id]["lessons"][le_id] = le
 
   html = """
-<script>
-function toggle(id, iconId) {
-  let el = document.getElementById(id);
-  let icon = document.getElementById(iconId);
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Curriculum</title>
+    <script>
+      function toggle(id, iconId) {
+        let el = document.getElementById(id);
+        let icon = document.getElementById(iconId);
 
-  if (el.style.display === 'none') {
-    el.style.display = 'block';
-    icon.innerHTML = "▼"; // expanded
-  } else {
-    el.style.display = 'none';
-    icon.innerHTML = "►"; // collapsed
-  }
-}
-function openDomainModal(subjectId) {
-  document.getElementById('modal_subject_id').value = subjectId;
-  document.getElementById('domainModal').style.display = 'block';
-}
-function closeModal() {
-  document.getElementById('domainModal').style.display = 'none';
-}
-</script>
-<style>
-.curriculum-node {
-  margin-left: 0px;
-  font-family: serif;
-  font-weight: bold;
-  font-size: 120%;
-}
-.subject-node {
-  margin-left: 20px;
-  font-family: monospace;
-  font-weight: bold;
-}
-.domain-node {
-  margin-left: 40px;
-  font-family: monospace;
-}
-.level-node {
-  margin-left: 60px;
-  font-family: monospace;
-}
-.module-node {
-  margin-left: 80px;
-  font-family: monospace;
-}
-.lesson-node {
-  margin-left: 100px;
-  font-family: monospace;
-}
-.toggle {
-  cursor: pointer;
-  margin-right: 5px;
-}
-</style>
+        if (el.style.display === 'none') {
+          el.style.display = 'block';
+          icon.innerHTML = "▼"; // expanded
+        } else {
+          el.style.display = 'none';
+          icon.innerHTML = "►"; // collapsed
+        }
+      }
+      function openDomainModal(subjectId) {
+        document.getElementById('modal_subject_id').value = subjectId;
+        document.getElementById('domainModal').style.display = 'block';
+      }
+      function closeModal() {
+        document.getElementById('domainModal').style.display = 'none';
+        document.getElementById('domain_name').value = '';
+      }
+    </script>
+    <style>
+    .curriculum-node {
+      margin-left: 0px;
+      font-family: serif;
+      font-weight: bold;
+      font-size: 120%;
+    }
+    .subject-node {
+      margin-left: 20px;
+      font-family: monospace;
+      font-weight: bold;
+    }
+    .domain-node {
+      margin-left: 40px;
+      font-family: monospace;
+    }
+    .level-node {
+      margin-left: 60px;
+      font-family: monospace;
+    }
+    .module-node {
+      margin-left: 80px;
+      font-family: monospace;
+    }
+    .lesson-node {
+      margin-left: 100px;
+      font-family: monospace;
+    }
+    .toggle {
+      cursor: pointer;
+      margin-right: 5px;
+    }
+    .add-btn {
+      margin-left: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .add-btn:hover {
+      color: green;
+    }
+    </style>
+  </head>
+  <body>
+    <h1>Curriculum</h1>
 
-<h1>Curriculum</h1>
+    <hr/>
 
-<hr/>
-
-<div id="domainModal" style="display:none; position:fixed; top:30%; left:40%; background:white; padding:15px; border:1px solid #ccc; box-shadow: 0 0px 10px rgba(0,0,0,0.3);">
-  <form method="post" action="/add_domain">
-    <input type="hidden" name="subject_id" id="modal_subject_id">
-    <div>
-      <label for="domain_name">Domain Name:</label>
-      <input type="text" name="name" id="domain_name" placeholder="New Domain">
+    <div id="domainModal" style="display:none; position:fixed; top:30%; left:40%; background:white; padding:15px; border:1px solid #ccc; box-shadow: 0 0px 10px rgba(0,0,0,0.3);">
+      <form method="post" action="/add_domain">
+        <input type="hidden" name="subject_id" id="modal_subject_id">
+        <div>
+          <label for="domain_name">Domain Name:</label>
+          <input type="text" name="name" id="domain_name" placeholder="New Domain">
+        </div>
+        <br/>
+        <button type="submit">Submit</button>
+        <button type="button" onclick="closeModal()">Cancel</button>
+      </form>
     </div>
-    <br/>
-    <button type="submit">Submit</button>
-    <button type="button" onclick="closeModal">Cancel</button>
-  </form>
-</div>
 
-<h1>Curriculum</h1>
+    <h1>Curriculum</h1>
 
-<hr/>
+    <hr/>
 """
   
   #Curriculum level
@@ -200,7 +214,12 @@ function closeModal() {
 <div class="subject-node" onclick="toggle('{sub_div}', '{sub_icon}')" >
     <span class="toggle" id="{sub_icon}">►</span>
     {s_data['name']}
-    <button type="button" onclick="openDomainModal('{s_id}')">+</button>
+    <span
+      class="add-btn"
+      onclick="event.stopPropagation(); openDomainModal('{s_id}')"
+      title="Add Domain">
+      +
+    </span>
 </div>
 
 <div id="{sub_div}" style="display:none;">
@@ -256,6 +275,10 @@ function closeModal() {
         html += "</div>" # domain
       html += "</div>" # subject
     html += "</div>" # curriculum
+  html += """
+  </body>
+</html>
+"""
   return html
 
 @app.post("/add_subject")
